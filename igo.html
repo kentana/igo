@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>囲碁</title>
+  <title>碁盤</title>
 
   <!-- jQuery -->
   <script src="lib/jquery.js"></script>
@@ -16,7 +16,33 @@
   <link rel="stylesheet" href="igo.css">
 </head>
 <body>
-  <h1>囲碁</h1>
+  <!-- 設定 -->
+  <div id="config-div">
+    <p>
+      碁盤の種類:
+      <select class="config" id="board-kind">
+        <option value="19">19路盤</option>
+        <option value="13">13路盤</option>
+        <option value="9">9路盤</option>
+      </select>
+    </p>
+
+    <p>
+      石の切り替えモード:
+      <select class="config" id="stone-mode">
+        <option value="mutual">交互</option>
+        <option value="manual">手動</option>
+      </select>
+    </p>
+
+    <p>
+      次に置く石:
+      <select class="config" id="next-stone">
+        <option value="black">黒石</option>
+        <option value="white">白石</option>
+      </select>
+    </p>
+  </div>
 
   <!-- キャンバス -->
   <canvas id="board" width="600" height="600"></canvas>

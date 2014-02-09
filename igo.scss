@@ -1,7 +1,18 @@
+// 設定
+#config-div {
+  display: flex;
+  margin-left: 4em;
+  margin-top: 1em;
+
+  * {
+    margin-right: 0.6em;
+  }
+}
+
 // キャンバス
 canvas {
   position: absolute;
-  top: 6em;
+  top: 4em;
   left: 5em;
   border: 1px solid black;
 }
