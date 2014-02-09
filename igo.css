@@ -1,7 +1,5 @@
-// キャンバス
 canvas {
   position: absolute;
   top: 6em;
   left: 5em;
-  border: 1px solid black;
-}
+  border: 1px solid black; }
