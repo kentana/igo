@@ -1,7 +1,7 @@
 $ ->
   # 変数
   # 19, 13, 9路盤の3択
-  numberOfLine = 19
+  numberOfLines = 19
 
   # 石の切り替えモード
   mutualMode = true
@@ -11,14 +11,19 @@ $ ->
 
   # キャンバス取る
   boardCv = $("#board")[0]
+  boardCtx = boardCv.getContext "2d"
+
   stoneCv = $("#stone")[0]
+  stoneCtx = stoneCv.getContext "2d"
+
   cursorCv = $("#cursor")[0]
-  canvasSize = 600
+  cursorCtx = cursorCv.getContext "2d"
+
+  canvasSize = boardCv.width
   canvasPos = boardCv.getBoundingClientRect()
 
   # キャンバスをクリア
-  clearCanvas = (cv) ->
-    ctx = cv.getContext "2d"
+  clearCanvas = (ctx) ->
     ctx.clearRect 0, 0, canvasSize, canvasSize
 
   # 交点を入れる配列
@@ -67,35 +72,33 @@ $ ->
 
     # 碁盤を描画
     drawBoard: ->
-      ctx = boardCv.getContext "2d"
-
-      ctx.strokeStyle = @lineColor
-      ctx.fillStyle = @lineColor
+      boardCtx.strokeStyle = @lineColor
+      boardCtx.fillStyle = @lineColor
 
       # 木の板を用意
-      ctx.drawImage @image, 0, 0, canvasSize, canvasSize
+      boardCtx.drawImage @image, 0, 0, canvasSize, canvasSize
 
       # 線を引く
       for line in [0..@points]
         thisLine = @margin + line * @linePadding
 
         # 横線
-        ctx.beginPath()
-        ctx.moveTo(@margin, thisLine)
-        ctx.lineTo(@lineEnd, thisLine)
-        ctx.stroke()
+        boardCtx.beginPath()
+        boardCtx.moveTo(@margin, thisLine)
+        boardCtx.lineTo(@lineEnd, thisLine)
+        boardCtx.stroke()
 
         # 縦線
-        ctx.beginPath()
-        ctx.moveTo(thisLine, @margin)
-        ctx.lineTo(thisLine, @lineEnd)
-        ctx.stroke()
+        boardCtx.beginPath()
+        boardCtx.moveTo(thisLine, @margin)
+        boardCtx.lineTo(thisLine, @lineEnd)
+        boardCtx.stroke()
 
         # 点を打つ
         if @lines is 19 and line in @dotLines
-          ctx.beginPath()
-          ctx.arc(thisLine, @margin + dot * @linePadding, 3, 0, Math.PI * 2, false) for dot in @dotLines
-          ctx.fill()
+          boardCtx.beginPath()
+          boardCtx.arc(thisLine, @margin + dot * @linePadding, 3, 0, Math.PI * 2, false) for dot in @dotLines
+          boardCtx.fill()
 
 
 
@@ -125,37 +128,35 @@ $ ->
     drawStone: (board) ->
       return null if @stone is "empty"
 
-      ctx = stoneCv.getContext "2d"
-      ctx.fillStyle = @stone
-      ctx.beginPath()
-      ctx.arc @x, @y, board.stoneRadius, 0, Math.PI * 2, false
-      ctx.fill()
+      stoneCtx.fillStyle = @stone
+      stoneCtx.beginPath()
+      stoneCtx.arc @x, @y, board.stoneRadius, 0, Math.PI * 2, false
+      stoneCtx.fill()
 
 
     # マウスを載せた時の挙動
     onMouse: (stone) ->
-      ctx = cursorCv.getContext "2d"
-      ctx.clearRect 0, 0, canvasSize, canvasSize
-      ctx.strokeStyle = stone
-      ctx.globalAlpha = 0.3
-      ctx.beginPath()
-      ctx.arc @x, @y, board.stoneRadius, 0, Math.PI * 2, false
-      ctx.stroke()
+      cursorCtx.clearRect 0, 0, canvasSize, canvasSize
+      cursorCtx.strokeStyle = stone
+      cursorCtx.globalAlpha = 0.3
+      cursorCtx.beginPath()
+      cursorCtx.arc @x, @y, board.stoneRadius, 0, Math.PI * 2, false
+      cursorCtx.stroke()
+
 
 
 
   # 画像のロードが終わったらボードを描画
-  board = new Board(numberOfLine)
-  board.image.addEventListener "load", ->
+  board = new Board(numberOfLines)
+  $(board.image).on "load", ->
     board.drawBoard()
-  , false
 
 
 
   # イベントハンドラをセット
   # カーソル位置に対応する交点を表示
   $(cursorCv).on "mousemove", (e) ->
-    clearCanvas cursorCv
+    clearCanvas cursorCtx
 
     x = e.pageX
     y = e.pageY
@@ -178,7 +179,7 @@ $ ->
         else clickedPoint.emptyStone()
 
       # 石を描画
-      clearCanvas stoneCv
+      clearCanvas stoneCtx
       point.drawStone(board) for point in points
 
 
@@ -187,7 +188,7 @@ $ ->
     switch @.id
       # 碁盤の種類変更
       when "board-kind"
-        clearCanvas cv for cv in [boardCv, stoneCv]
+        clearCanvas ctx for ctx in [boardCtx, stoneCtx]
         board.changeLines(@.value)
         board.drawBoard()
 

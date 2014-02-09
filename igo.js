@@ -3,18 +3,19 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(function() {
-    var Board, Point, board, boardCv, canvasPos, canvasSize, clearCanvas, cursorCv, mutualMode, nextStone, numberOfLine, points, stoneCv;
-    numberOfLine = 19;
+    var Board, Point, board, boardCtx, boardCv, canvasPos, canvasSize, clearCanvas, cursorCtx, cursorCv, mutualMode, nextStone, numberOfLines, points, stoneCtx, stoneCv;
+    numberOfLines = 19;
     mutualMode = true;
     nextStone = "black";
     boardCv = $("#board")[0];
+    boardCtx = boardCv.getContext("2d");
     stoneCv = $("#stone")[0];
+    stoneCtx = stoneCv.getContext("2d");
     cursorCv = $("#cursor")[0];
-    canvasSize = 600;
+    cursorCtx = cursorCv.getContext("2d");
+    canvasSize = boardCv.width;
     canvasPos = boardCv.getBoundingClientRect();
-    clearCanvas = function(cv) {
-      var ctx;
-      ctx = cv.getContext("2d");
+    clearCanvas = function(ctx) {
       return ctx.clearRect(0, 0, canvasSize, canvasSize);
     };
     points = [];
@@ -66,30 +67,29 @@
       };
 
       Board.prototype.drawBoard = function() {
-        var ctx, dot, line, thisLine, _i, _j, _len, _ref, _ref1, _results;
-        ctx = boardCv.getContext("2d");
-        ctx.strokeStyle = this.lineColor;
-        ctx.fillStyle = this.lineColor;
-        ctx.drawImage(this.image, 0, 0, canvasSize, canvasSize);
+        var dot, line, thisLine, _i, _j, _len, _ref, _ref1, _results;
+        boardCtx.strokeStyle = this.lineColor;
+        boardCtx.fillStyle = this.lineColor;
+        boardCtx.drawImage(this.image, 0, 0, canvasSize, canvasSize);
         _results = [];
         for (line = _i = 0, _ref = this.points; 0 <= _ref ? _i <= _ref : _i >= _ref; line = 0 <= _ref ? ++_i : --_i) {
           thisLine = this.margin + line * this.linePadding;
-          ctx.beginPath();
-          ctx.moveTo(this.margin, thisLine);
-          ctx.lineTo(this.lineEnd, thisLine);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(thisLine, this.margin);
-          ctx.lineTo(thisLine, this.lineEnd);
-          ctx.stroke();
+          boardCtx.beginPath();
+          boardCtx.moveTo(this.margin, thisLine);
+          boardCtx.lineTo(this.lineEnd, thisLine);
+          boardCtx.stroke();
+          boardCtx.beginPath();
+          boardCtx.moveTo(thisLine, this.margin);
+          boardCtx.lineTo(thisLine, this.lineEnd);
+          boardCtx.stroke();
           if (this.lines === 19 && __indexOf.call(this.dotLines, line) >= 0) {
-            ctx.beginPath();
+            boardCtx.beginPath();
             _ref1 = this.dotLines;
             for (_j = 0, _len = _ref1.length; _j < _len; _j++) {
               dot = _ref1[_j];
-              ctx.arc(thisLine, this.margin + dot * this.linePadding, 3, 0, Math.PI * 2, false);
+              boardCtx.arc(thisLine, this.margin + dot * this.linePadding, 3, 0, Math.PI * 2, false);
             }
-            _results.push(ctx.fill());
+            _results.push(boardCtx.fill());
           } else {
             _results.push(void 0);
           }
@@ -122,38 +122,34 @@
       };
 
       Point.prototype.drawStone = function(board) {
-        var ctx;
         if (this.stone === "empty") {
           return null;
         }
-        ctx = stoneCv.getContext("2d");
-        ctx.fillStyle = this.stone;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, board.stoneRadius, 0, Math.PI * 2, false);
-        return ctx.fill();
+        stoneCtx.fillStyle = this.stone;
+        stoneCtx.beginPath();
+        stoneCtx.arc(this.x, this.y, board.stoneRadius, 0, Math.PI * 2, false);
+        return stoneCtx.fill();
       };
 
       Point.prototype.onMouse = function(stone) {
-        var ctx;
-        ctx = cursorCv.getContext("2d");
-        ctx.clearRect(0, 0, canvasSize, canvasSize);
-        ctx.strokeStyle = stone;
-        ctx.globalAlpha = 0.3;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, board.stoneRadius, 0, Math.PI * 2, false);
-        return ctx.stroke();
+        cursorCtx.clearRect(0, 0, canvasSize, canvasSize);
+        cursorCtx.strokeStyle = stone;
+        cursorCtx.globalAlpha = 0.3;
+        cursorCtx.beginPath();
+        cursorCtx.arc(this.x, this.y, board.stoneRadius, 0, Math.PI * 2, false);
+        return cursorCtx.stroke();
       };
 
       return Point;
 
     })();
-    board = new Board(numberOfLine);
-    board.image.addEventListener("load", function() {
+    board = new Board(numberOfLines);
+    $(board.image).on("load", function() {
       return board.drawBoard();
-    }, false);
+    });
     $(cursorCv).on("mousemove", function(e) {
       var pointOnCursor, x, y;
-      clearCanvas(cursorCv);
+      clearCanvas(cursorCtx);
       x = e.pageX;
       y = e.pageY;
       pointOnCursor = board.getPoint(points, x, y);
@@ -174,7 +170,7 @@
           default:
             clickedPoint.emptyStone();
         }
-        clearCanvas(stoneCv);
+        clearCanvas(stoneCtx);
         _results = [];
         for (_i = 0, _len = points.length; _i < _len; _i++) {
           point = points[_i];
@@ -184,13 +180,13 @@
       }
     });
     return $(".config").on("change", function() {
-      var cv, _i, _len, _ref;
+      var ctx, _i, _len, _ref;
       switch (this.id) {
         case "board-kind":
-          _ref = [boardCv, stoneCv];
+          _ref = [boardCtx, stoneCtx];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            cv = _ref[_i];
-            clearCanvas(cv);
+            ctx = _ref[_i];
+            clearCanvas(ctx);
           }
           board.changeLines(this.value);
           return board.drawBoard();
