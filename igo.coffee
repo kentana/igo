@@ -136,7 +136,6 @@ $ ->
 
     # マウスを載せた時の挙動
     onMouse: (stone) ->
-      cursorCtx.clearRect 0, 0, canvasSize, canvasSize
       cursorCtx.strokeStyle = stone
       cursorCtx.globalAlpha = 0.3
       cursorCtx.beginPath()
@@ -156,7 +155,7 @@ $ ->
   # イベントハンドラをセット
   # カーソル位置に対応する交点を表示
   $(cursorCv).on "mousemove", (e) ->
-    clearCanvas cursorCtx
+    cursorCtx.clearRect 0, 0, canvasSize, canvasSize
 
     x = e.pageX
     y = e.pageY

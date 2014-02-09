@@ -132,7 +132,6 @@
       };
 
       Point.prototype.onMouse = function(stone) {
-        cursorCtx.clearRect(0, 0, canvasSize, canvasSize);
         cursorCtx.strokeStyle = stone;
         cursorCtx.globalAlpha = 0.3;
         cursorCtx.beginPath();
@@ -149,7 +148,7 @@
     });
     $(cursorCv).on("mousemove", function(e) {
       var pointOnCursor, x, y;
-      clearCanvas(cursorCtx);
+      cursorCtx.clearRect(0, 0, canvasSize, canvasSize);
       x = e.pageX;
       y = e.pageY;
       pointOnCursor = board.getPoint(points, x, y);
