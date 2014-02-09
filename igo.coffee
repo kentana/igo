@@ -29,15 +29,11 @@ $ ->
   # 碁盤のクラス
   class Board
     constructor: (@lines) ->
-      @points = @lines - 1
-      @margin = canvasSize / @lines * 0.5
-      @linePadding = (canvasSize - @margin * 2) / @points
-      @stoneRadius = @linePadding / 2 * 0.7
+      @.changeLines @lines
       @image = new Image()
       @image.src = "image/wood.jpg"
       @lineColor = "black"
       @dotLines = [3, 9, 15]
-      @lineEnd = canvasSize - @margin
 
       # 交点オブジェクトを生成
       points = []
