@@ -20,23 +20,12 @@
     points = [];
     Board = (function() {
       function Board(lines) {
-        var col, row, _i, _j, _ref, _ref1;
         this.lines = lines;
-        this.points = this.lines - 1;
-        this.margin = canvasSize / this.lines * 0.5;
-        this.linePadding = (canvasSize - this.margin * 2) / this.points;
-        this.stoneRadius = this.linePadding / 2 * 0.7;
+        this.changeLines(this.lines);
         this.image = new Image();
         this.image.src = "image/wood.jpg";
         this.lineColor = "black";
         this.dotLines = [3, 9, 15];
-        this.lineEnd = canvasSize - this.margin;
-        points = [];
-        for (col = _i = 0, _ref = this.points; 0 <= _ref ? _i <= _ref : _i >= _ref; col = 0 <= _ref ? ++_i : --_i) {
-          for (row = _j = 0, _ref1 = this.points; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; row = 0 <= _ref1 ? ++_j : --_j) {
-            points.push(new Point(this, col, row));
-          }
-        }
       }
 
       Board.prototype.changeLines = function(num) {

@@ -35,13 +35,6 @@ $ ->
       @lineColor = "black"
       @dotLines = [3, 9, 15]
 
-      # 交点オブジェクトを生成
-      points = []
-
-      for col in [0..@points]
-        for row in [0..@points]
-          points.push new Point @, col, row
-
 
     # 碁盤の種類を変更
     changeLines: (num) ->
